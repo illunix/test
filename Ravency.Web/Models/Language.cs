@@ -1,10 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Ravency.Application.Shared.DTO
+namespace Ravency.Web.Models
 {
-    public class LanguageDto<T>
+    public class Language<T>
     {
         public Guid Id { get; set; }
         public string Name { get; set; }

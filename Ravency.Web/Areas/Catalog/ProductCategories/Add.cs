@@ -1,23 +1,20 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FluentValidation;
-using FluentValidation.Resources;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Ravency.Core.Entities;
-using Ravency.Application.Shared.DTO;
 using Ravency.Infrastructure.Data;
+using Ravency.Web.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Dynamic;
 
-namespace Ravency.Application.ProductCategories.Commands
+namespace Ravency.Web.Areas.Catalog.ProductCategories
 {
-    public class AddProductCategory
+    public class Add
     {
         public class Query : IRequest<Command>
         {
@@ -38,7 +35,7 @@ namespace Ravency.Application.ProductCategories.Commands
             {
                 var languages = await _context.Languages
                     .Where(language => language.IsActive)
-                    .ProjectTo<LanguageDto<ProductCategory>>(_configuration)
+                    .ProjectTo<Language<ProductCategory>>(_configuration)
                     .OrderByDescending(x => x.IsDefault)
                     .ThenBy(language => language.Name)
                     .ToListAsync();
@@ -53,7 +50,7 @@ namespace Ravency.Application.ProductCategories.Commands
         public class Command : IRequest
         {
             public int Gender { get; set; }
-            public List<LanguageDto<ProductCategory>> Languages { get; set; }
+            public List<Language<ProductCategory>> Languages { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -110,7 +107,7 @@ namespace Ravency.Application.ProductCategories.Commands
 
                     if (language.IsDefault)
                     {
-                        category = _mapper.Map<LanguageDto<ProductCategory>, ProductCategory>(language);
+                        category = _mapper.Map<Language<ProductCategory>, ProductCategory>(language);
 
                         _mapper.Map(command, category);
 
@@ -119,7 +116,7 @@ namespace Ravency.Application.ProductCategories.Commands
                     }
                     else
                     {
-                        var categoryLocale = _mapper.Map<LanguageDto<ProductCategory>, ProductCategoryLocale>(language);
+                        var categoryLocale = _mapper.Map<Language<ProductCategory>, ProductCategoryLocale>(language);
 
                         categoryLocale.Id = Guid.NewGuid();
 

@@ -9,9 +9,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Ravency.Application.ProductCategories.Commands
+namespace Ravency.Web.Areas.Catalog.ProductCategories
 {
-    public class DeleteProductCategory
+    public class Delete
     {
         public class Command : IRequest
         {

@@ -1,0 +1,74 @@
+﻿@model Ravency.Web.Areas.Catalog.ProductCategories.Add.Command
+@using Ravency.Web.Enums
+ 
+<section class="content">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-5" style="margin-top: 15px">
+                <div class="card card-default">
+                    <div class="card-header">
+                        <h3 class="card-title">Add Product category</h3>
+                    </div>
+                    <form asp-action="Add">
+                        <div class="card-body">
+                            <ul class="nav nav-tabs">
+                                <li class="active">
+                                    <a class="nav-item nav-link active" href="#tab-general" data-toggle="tab">General</a>
+                                </li>
+                                <li>
+                                    <a class="nav-item nav-link" href="#tab-data" data-toggle="tab">Data</a>
+                                </li>
+                            </ul>
+                            <div class="tab-content">
+                                <div class="tab-pane active" id="tab-general">
+                                    <ul class="nav nav-tabs mt-3" id="language">
+                                        @foreach (var language in Model.Languages)
+                                        {
+                                            <li class="@(language.IsDefault ? "active" : "")">
+                                                <a class="nav-item nav-link @(language.IsDefault ? "active" : "")" href="#@language.Name.ToLower()-language" data-toggle="tab">@language.Name</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <div class="tab-content p-3">
+                                        @for (var i = 0; i < Model.Languages.Count; i++)
+                                        {
+                                            <div class="tab-pane @(Model.Languages[i].IsDefault ? "active" : "")" id="@Model.Languages[i].Name.ToLower()-language">
+                                                <div class="form-group">
+                                                    <input asp-for="Languages[i].Id" type="hidden" class="form-control" />
+                                                    <input asp-for="Languages[i].Name" type="hidden" class="form-control" />
+                                                    <input asp-for="Languages[i].IsActive" type="hidden" class="form-control" />
+                                                    <input asp-for="Languages[i].IsDefault" type="hidden" class="form-control" />
+
+                                                    <label>Category name</label>
+                                                    <input asp-for="Languages[i].Data.Name" type="text" class="form-control" />
+                                                    <span asp-validation-for="Languages[i].Data.Name" class="text-danger"></span>
+                                                </div>
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="tab-pane" id="tab-data">
+                                    <div class="form-group p-3">
+                                        <label>Gender</label>
+                                        <select class="form-control" asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()"></select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer">
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        let pane = $('.field-validation-error:first').closest('.tab-pane');
+        $('#' + pane.attr('aria-labelledby')).tab('show');
+    </script>
+}

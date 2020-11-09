@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace Ravency.Application.ProductCategories.Enums
+namespace Ravency.Web.Enums
 {
     public enum Gender
     {
