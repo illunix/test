@@ -6772,13 +6772,13 @@
     },
     "Ravency.Core/1.0.0": {
       "type": "project",
-      "path": "../src/Ravency.Core/Ravency.Core.csproj",
-      "msbuildProject": "../src/Ravency.Core/Ravency.Core.csproj"
+      "path": "../Ravency.Core/Ravency.Core.csproj",
+      "msbuildProject": "../Ravency.Core/Ravency.Core.csproj"
     },
     "Ravency.Infrastructure/1.0.0": {
       "type": "project",
-      "path": "../src/Ravency.Infrastructure/Ravency.Infrastructure.csproj",
-      "msbuildProject": "../src/Ravency.Infrastructure/Ravency.Infrastructure.csproj"
+      "path": "../Ravency.Infrastructure/Ravency.Infrastructure.csproj",
+      "msbuildProject": "../Ravency.Infrastructure/Ravency.Infrastructure.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -6795,11 +6795,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\cros4\\Desktop\\Ravency\\Ravency.Application\\Ravency.Application.csproj",
+      "projectUniqueName": "C:\\Users\\cros4\\Desktop\\Ravency\\src\\Ravency.Application\\Ravency.Application.csproj",
       "projectName": "Ravency.Application",
-      "projectPath": "C:\\Users\\cros4\\Desktop\\Ravency\\Ravency.Application\\Ravency.Application.csproj",
+      "projectPath": "C:\\Users\\cros4\\Desktop\\Ravency\\src\\Ravency.Application\\Ravency.Application.csproj",
       "packagesPath": "C:\\Users\\cros4\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\cros4\\Desktop\\Ravency\\Ravency.Application\\obj\\",
+      "outputPath": "C:\\Users\\cros4\\Desktop\\Ravency\\src\\Ravency.Application\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\cros4\\AppData\\Roaming\\NuGet\\NuGet.Config",

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "uyIq46mPwrK7a3RNhJtye0zOC8R+njV9gnR0tTYU79K+ChnGXXO9mv2vFD+eRHHDAEDhpVD6Jfyj40/TND/BAQ==",
+  "dgSpecHash": "rsV6GCXOTTk3Mhl4FOrtcbv5eyJenugpYdXCZpb9xptv3dm/4D2xkbC+yIhDRdvkvR0rmZPF5XD1dhHGX0iZCA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\cros4\\Desktop\\Ravency\\Ravency.Application\\Ravency.Application.csproj",
+  "projectFilePath": "C:\\Users\\cros4\\Desktop\\Ravency\\src\\Ravency.Application\\Ravency.Application.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\cros4\\.nuget\\packages\\automapper\\10.1.1\\automapper.10.1.1.nupkg.sha512",
     "C:\\Users\\cros4\\.nuget\\packages\\fluentvalidation\\9.3.0-preview3\\fluentvalidation.9.3.0-preview3.nupkg.sha512",
