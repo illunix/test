@@ -1,0 +1,147 @@
+﻿@model Ravency.Web.Areas.Catalog.ProductCategories.Index.Result
+
+<section class="content">
+    <div class="container-fluid">
+        <a asp-action="Add" asp-controller="ProductCategories" class="btn btn-primary" style="margin-top: 15px">Add</a>
+
+        <div class="row" style="margin-top: 10px">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Product categories</h3>
+
+                        <div class="card-tools">
+                            <div class="input-group input-group-sm" style="width: 150px;">
+                                <input type="text" name="table_search" class="form-control float-right" placeholder="Search">
+
+                                <div class="input-group-append">
+                                    <button type="submit" class="btn btn-default">
+                                        <i class="fas fa-search"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var category in Model.ProductCategories)
+                                {
+                                    <tr>
+                                        <td>
+                                            @category.Name
+
+                                            @if (category.MissData)
+                                            {
+                                            <td class="text-danger">(Missing data)</td>
+                                        }
+                                            </td>
+
+                                            <td class="project-actions text-right">
+                                                <a asp-action="Edit" asp-route-id="@category.Id" class="btn btn-info btn-sm">
+                                                    <i class="fas fa-pencil-alt">
+                                                    </i>
+                                                    Edit
+                                                </a>
+                                                <a class="btn btn-danger btn-sm btn-delete" href="#" data-id="@category.Id" data-any-product-uses-this-category="@category.AnyProductUsesThisCategory.ToString().ToLowerInvariant()" data-delete-button data-toggle="modal" data-target="#modal-confirm-delete">
+                                                    <i class="fas fa-trash">
+                                                    </i>
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+
+                                    }
+                            </tbody>
+                        </table>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="modal fade" id="modal-confirm-delete">
+    <div class="modal-dialog">
+        <div class="modal-content active">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <form asp-action="Index">
+                    <input id="selected-categoryId-confirm" data-selected-categoryId type="hidden" asp-for="SelectedProductCategoryId" />
+                    <input value="true" type="hidden" asp-for="Delete" />
+
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-confirm-delete-any-product-uses-this-category">
+    <div class="modal-dialog">
+        <div class="modal-content active">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger">You can't delete this category because there is a products what use that.</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary btn-delete-with-products" data-dismiss="modal" data-toggle="modal" data-target="#modal-confirm-delete-with-products">Delete with products</button>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="modal-confirm-delete-with-products">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Confirm</h4>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p class="text-danger">Are you sure you want delete all products with this category?</p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <form asp-action="Index">
+                    <input id="selected-categoryId-with-products-confirm" data-selected-categoryId type="hidden" asp-for="SelectedProductCategoryId" />
+                    <input value="true" type="hidden" asp-for="DeleteWithProducts" />
+
+                    <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts
+{
+    <script type="text/javascript">
+        $('.btn-delete').click(function (e) {
+            $('[data-selected-categoryId]').val($(this).data('id'));
+
+            if ($(this).data('any-product-uses-this-category')) {
+                e.preventDefault();
+                e.stopPropagation();
+                $("#modal-confirm-delete-any-product-uses-this-category").modal();
+            }
+        });
+    </script>
+}

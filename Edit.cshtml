@@ -1,4 +1,4 @@
-﻿@model Ravency.Web.Areas.Catalog.ProductCategories.Add.Command
+﻿@model Ravency.Web.Areas.Catalog.ProductCategories.Edit.Command
 @using Ravency.Web.Enums
  
 <section class="content">
@@ -34,10 +34,14 @@
                                         {
                                             <div class="tab-pane @(Model.Languages[i].IsDefault ? "active" : "")" id="@Model.Languages[i].Name.ToLower()-language">
                                                 <div class="form-group">
-                                                    <input asp-for="Languages[i].Id" type="hidden" class="form-control" />
-                                                    <input asp-for="Languages[i].Name" type="hidden" class="form-control" />
-                                                    <input asp-for="Languages[i].IsActive" type="hidden" class="form-control" />
-                                                    <input asp-for="Languages[i].IsDefault" type="hidden" class="form-control" />
+                                                    <input asp-for="Id" type="hidden" />
+
+                                                    <input asp-for="Languages[i].Id" type="hidden" />
+                                                    <input asp-for="Languages[i].Name" type="hidden" />
+                                                    <input asp-for="Languages[i].IsActive" type="hidden" />
+                                                    <input asp-for="Languages[i].IsDefault" type="hidden" />
+
+                                                    <input value="@Model.Id" asp-for="Languages[i].Data.Id" type="hidden" />
 
                                                     <label>Category name</label>
                                                     <input asp-for="Languages[i].Data.Name" type="text" class="form-control" />
@@ -47,16 +51,38 @@
                                         }
                                     </div>
                                 </div>
-                                <div class="tab-pane" id="tab-data">
-                                    <div class="form-group p-3">
-                                        <label>Gender</label>
-                                        <select class="form-control" asp-for="Gender" asp-items="Html.GetEnumSelectList<Gender>()"></select>
-                                    </div>
-                                </div>
+                                @for (var i = 0; i < Model.Languages.Count; i++)
+                                {
+                                    @if (Model.Languages[i].IsDefault)
+                                    {
+                                        <div class="tab-pane" id="tab-data">
+                                            <div class="form-group p-3">
+                                                <label>Gender</label>
+                                                <select class="form-control" asp-for="Languages[i].Data.Gender" asp-items="Html.GetEnumSelectList<Gender>()"></select>
+                                            </div>
+                                        </div>
+                                    }
+                                }
                             </div>
                         </div>
                         <div class="card-footer">
-                            <button type="submit" class="btn btn-primary">Submit</button>
+                            <button type="button" data-toggle="modal" data-target="#modal-confirm" class="btn btn-primary">Submit</button>
+                        </div>
+                        <div class="modal fade" id="modal-confirm">
+                            <div class="modal-dialog">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Confirm</h4>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    <div class="modal-footer justify-content-between">
+                                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                        <button type="submit" class="btn btn-primary" asp-route-id="@Model.Id">Save changes</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>

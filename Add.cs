@@ -99,35 +99,33 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
             protected override async Task Handle(Command command, CancellationToken cancellationToken)
             {
+                var categoryId = new Guid();
+
                 foreach (var language in command.Languages)
                 {
-                    var category = new ProductCategory();
-
-                    category.Id = Guid.NewGuid();
-
                     if (language.IsDefault)
                     {
-                        category = _mapper.Map<Language<ProductCategory>, ProductCategory>(language);
+                        var category = _mapper.Map<Language<ProductCategory>, ProductCategory>(language);
 
                         _mapper.Map(command, category);
 
                         _context.ProductCategories
                             .Add(category);
+
+                        categoryId = category.Id;
                     }
                     else
                     {
                         var categoryLocale = _mapper.Map<Language<ProductCategory>, ProductCategoryLocale>(language);
 
-                        categoryLocale.Id = Guid.NewGuid();
-
-                        _mapper.Map(category, categoryLocale);
+                        categoryLocale.CategoryId = categoryId;
 
                         _context.ProductCategoryLocales
                             .Add(categoryLocale);
                     }
-
-                    await _context.SaveChangesAsync();
                 }
+
+                await _context.SaveChangesAsync();
             }
         }
     }
