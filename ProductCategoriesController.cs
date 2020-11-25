@@ -45,7 +45,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
                 if (model.DeleteWithProducts)
                 {
-                    await _mediator.Send(new Delete.Command() { Id = model.SelectedProductCategoryId, DeleteProductsOnly = true });
+                    await _mediator.Send(new Delete.Command() { Id = model.SelectedProductCategoryId, DeleteWithProducts = true });
                 }
             }
 
@@ -66,13 +66,11 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
             {
                 return View(command);
             }
-            else
-            {
-                await _mediator.Send(command);
 
-                TempData["ToastrSuccess"] = "Successfully added new product category.";
-                return View(command);
-            }
+            await _mediator.Send(command);
+
+            TempData["ToastrSuccess"] = "Successfully added new product category.";
+            return View(command);
         }
 
         public async Task<IActionResult> Edit(Edit.Query query)
@@ -84,10 +82,8 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                 Response.StatusCode = 404;
                 return View("AdminLTE/_PageNotFound");
             }
-            else
-            {
-                return View(command);
-            }
+
+            return View(command);
         }
 
         [HttpPost]
@@ -97,13 +93,11 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
             {
                 return View(command);
             }
-            else
-            {
-                await _mediator.Send(command);
 
-                TempData["ToastrSuccess"] = "Successfully updated product category.";
-                return View(command);
-            }
+            await _mediator.Send(command);
+
+            TempData["ToastrSuccess"] = "Successfully updated product category.";
+            return View(command);
         }
     }
 }

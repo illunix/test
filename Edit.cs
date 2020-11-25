@@ -67,7 +67,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
                     if (language.IsDefault)
                     {
-                        language.Data.Name = category.Name;
+                        _mapper.Map(language, category);
                     }
                     else
                     {
@@ -75,7 +75,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                         {
                             if (language.Id == categoryLocale.LanguageId)
                             {
-                                language.Data.Name = categoryLocale.Name;
+                                _mapper.Map(language, categoryLocale);
                             }
                         }
                     }
@@ -134,11 +134,11 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                         }
                         else
                         {
-                            var x = _mapper.Map<Language<ProductCategory>, ProductCategoryLocale>(language);
+                            categoryLocale = _mapper.Map<Language<ProductCategory>, ProductCategoryLocale>(language);
 
-                            x.CategoryId = category.Id;
+                            _mapper.Map(category, categoryLocale);
 
-                            _context.Add(x);
+                            _context.Add(categoryLocale);
                         }
                     }
                 }

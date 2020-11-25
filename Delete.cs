@@ -16,7 +16,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
         public class Command : IRequest
         {
             public Guid Id { get; set; }
-            public bool DeleteProductsOnly { get; set; }
+            public bool DeleteWithProducts { get; set; }
         }
 
         public class CommandValidator : AbstractValidator<Command>
@@ -39,7 +39,26 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
             protected override async Task Handle(Command command, CancellationToken cancellationToken)
             {
-                if (command.DeleteProductsOnly)
+                var category = await _context.ProductCategories
+                    .FindAsync(command.Id);
+
+                _context.ProductCategories
+                    .Remove(category);
+
+                var categoryLocales = await _context.ProductCategoryLocales
+                    .Where(x => x.CategoryId == command.Id)
+                    .ToListAsync();
+
+                if (categoryLocales.Any())
+                {
+                    foreach (var categoryLocale in categoryLocales)
+                    {
+                        _context.ProductCategoryLocales
+                            .Remove(categoryLocale);
+                    }
+                }
+
+                if (command.DeleteWithProducts)
                 {
                     var products = await _context.Products
                         .Where(product => product.CategoryId == command.Id)
@@ -49,27 +68,6 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                     {
                         _context.Products
                             .Remove(product);
-                    }
-                }
-                else
-                {
-                    var category = await _context.ProductCategories
-                        .FindAsync(command.Id);
-
-                    _context.ProductCategories
-                        .Remove(category);
-
-                    var categoryLocales = await _context.ProductCategoryLocales
-                        .Where(x => x.CategoryId == command.Id)
-                        .ToListAsync();
-
-                    if (categoryLocales.Any())
-                    {
-                        foreach (var categoryLocale in categoryLocales)
-                        {
-                            _context.ProductCategoryLocales
-                                .Remove(categoryLocale);
-                        }
                     }
                 }
 

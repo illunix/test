@@ -30,6 +30,9 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                 .ForMember(d => d.CategoryId, opt => opt.MapFrom(c => c.Data.Id))
                 .ForMember(d => d.LanguageId, opt => opt.MapFrom(c => c.Id))
                 .ForMember(d => d.Name, opt => opt.MapFrom(c => c.Data.Name));
+
+            CreateMap<ProductCategory, ProductCategoryLocale>()
+                .ForMember(d => d.CategoryId, opt => opt.MapFrom(c => c.Id));
         }
     }
 }
