@@ -65,9 +65,9 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Delete(Index.Result model)
+        public async Task<ActionResult> Delete(Delete.Command request)
         {
-            await _mediator.Send(new Delete.Command { Id = model.SelectedProductCategoryId });
+            await _mediator.Send(request);
 
             TempData["ToastrSuccess"] = "Successfully deleted product category.";
 
@@ -76,9 +76,9 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteWithProducts(Index.Result model)
+        public async Task<ActionResult> DeleteWithProducts(DeleteWithProducts.Command request)
         {
-            await _mediator.Send(new DeleteWithProducts.Command { Id = model.SelectedProductCategoryId });
+            await _mediator.Send(request);
 
             TempData["ToastrSuccess"] = "Successfully deleted product category with products.";
 

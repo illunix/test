@@ -20,9 +20,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
         public class Result
         {
-            public Guid SelectedProductCategoryId { get; set; }
-            public bool Delete { get; set; }
-            public bool DeleteWithProducts { get; set; }
+            public Guid Id { get; set; }
             public List<ProductCategory> ProductCategories { get; set; }
 
             public class ProductCategory
