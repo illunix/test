@@ -1,10 +1,6 @@
 ﻿using AutoMapper;
 using Ravency.Core.Entities;
-using Ravency.Web.Areas.Catalog.ProductCategories;
 using Ravency.Web.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Ravency.Web.Areas.Catalog.ProductCategories
 {

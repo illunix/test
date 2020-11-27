@@ -1,7 +1,6 @@
 ﻿using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using FluentValidation;
-using FluentValidation.Resources;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using Ravency.Core.Entities;
@@ -15,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Ravency.Web.Areas.Catalog.ProductCategories
 {
-    public class Edit 
+    public class Edit
     {
         public class Query : IRequest<Command>
         {

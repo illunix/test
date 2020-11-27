@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System.Threading.Tasks;
-using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using Ravency.Web.Areas.Catalog.ProductCategories;
-using Ravency.Core.Entities;
-using Ravency.Infrastructure.Data;
 
 namespace Ravency.Web.Areas.Catalog.ProductCategories
 {
@@ -47,11 +42,11 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                 {
                     await _mediator.Send(new Delete.Command() { Id = model.SelectedProductCategoryId, DeleteWithProducts = true });
                 }
+
+                productCategories = (await _mediator.Send(new Index.Query())).ProductCategories;
+
+                model.ProductCategories = productCategories;
             }
-
-            productCategories = (await _mediator.Send(new Index.Query())).ProductCategories;
-
-            model.ProductCategories = productCategories;
 
             return View(model);
         }

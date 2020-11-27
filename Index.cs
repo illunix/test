@@ -2,7 +2,6 @@
 using AutoMapper.QueryableExtensions;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using Ravency.Core.Entities;
 using Ravency.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
@@ -61,7 +60,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                     var categoryLocales = await _context.ProductCategoryLocales
                         .Where(categoryLocale => categoryLocale.CategoryId == category.Id)
                         .ToListAsync();
-                    
+
                     if (categoryLocales.Count != languages.Count)
                     {
                         category.MissData = true;
