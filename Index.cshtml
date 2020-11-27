@@ -75,7 +75,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <form asp-action="Delete">
+                <form asp-action="Delete" asp-antiforgery="true">
                     <input id="selected-categoryId-confirm" data-selected-categoryId type="hidden" asp-for="SelectedProductCategoryId" />
                     <button type="submit" class="btn btn-primary">Delete</button>
                 </form>
@@ -116,7 +116,7 @@
             </div>
             <div class="modal-footer justify-content-between">
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                <form asp-action="Delete">
+                <form asp-action="DeleteWithProducts" asp-antiforgery="true">
                     <input id="selected-categoryId-with-products-confirm" data-selected-categoryId type="hidden" asp-for="SelectedProductCategoryId" />
                     <button type="submit" class="btn btn-primary">Delete</button>
                 </form>

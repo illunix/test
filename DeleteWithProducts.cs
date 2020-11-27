@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Ravency.Web.Areas.Catalog.ProductCategories
 {
-    public class Delete
+    public class DeleteWithProducts
     {
         public class Command : IRequest
         {
@@ -53,6 +53,16 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                         _context.ProductCategoryLocales
                             .Remove(categoryLocale);
                     }
+                }
+
+                var products = await _context.Products
+                    .Where(product => product.CategoryId == command.Id)
+                    .ToListAsync();
+
+                foreach (var product in products)
+                {
+                    _context.Products
+                        .Remove(product);
                 }
 
                 await _context.SaveChangesAsync();
