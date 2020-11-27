@@ -19,38 +19,6 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
         public async Task<IActionResult> Index()
             => View(await _mediator.Send(new Index.Query()));
 
-        [HttpPost]
-        public async Task<ActionResult> Index(Index.Result model)
-        {
-            var productCategories = (await _mediator.Send(new Index.Query())).ProductCategories;
-
-            if (model.Delete || model.DeleteWithProducts)
-            {
-                var productCategory = productCategories
-                    .Where(category => category.Id == model.SelectedProductCategoryId)
-                    .SingleOrDefault();
-
-                if (productCategory is null)
-                {
-                    Response.StatusCode = 500;
-                    return View("AdminLTE/_SomethingWentWrong");
-                }
-
-                await _mediator.Send(new Delete.Command() { Id = model.SelectedProductCategoryId });
-
-                if (model.DeleteWithProducts)
-                {
-                    await _mediator.Send(new Delete.Command() { Id = model.SelectedProductCategoryId, DeleteWithProducts = true });
-                }
-
-                productCategories = (await _mediator.Send(new Index.Query())).ProductCategories;
-
-                model.ProductCategories = productCategories;
-            }
-
-            return View(model);
-        }
-
         public async Task<IActionResult> Add()
             => View(await _mediator.Send(new Add.Query()));
 
@@ -93,6 +61,40 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
             TempData["ToastrSuccess"] = "Successfully updated product category.";
             return View(command);
+        }
+
+        [HttpPost]
+        public async Task<ActionResult> Delete(Index.Result model)
+        {
+            var productCategories = (await _mediator.Send(new Index.Query())).ProductCategories;
+
+            var productCategory = productCategories
+                .Where(category => category.Id == model.SelectedProductCategoryId)
+                .SingleOrDefault();
+
+            if (productCategory is null)
+            {
+                Response.StatusCode = 500;
+                return View("AdminLTE/_SomethingWentWrong");
+            }
+
+            if (model.Delete)
+            {
+                await _mediator.Send(new Index.Command { Id = model.SelectedProductCategoryId, Delete = true });
+
+            }
+            else if (model.DeleteWithProducts)
+            {
+                await _mediator.Send(new Index.Command { Id = model.SelectedProductCategoryId, DeleteWithProducts = true });
+            }
+
+            productCategories = (await _mediator.Send(new Index.Query())).ProductCategories;
+
+            model.ProductCategories = productCategories;
+
+            TempData["ToastrSuccess"] = "Successfully deleted product category.";
+
+            return View("Index", model);
         }
     }
 }
