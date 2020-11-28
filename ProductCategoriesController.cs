@@ -23,6 +23,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
             => View(await _mediator.Send(new Add.Query()));
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<ActionResult> Add(Add.Command command)
         {
             if (!ModelState.IsValid)
@@ -36,11 +37,11 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
             return View(command);
         }
 
-        public async Task<IActionResult> Edit(Edit.Query query)
+        public async Task<IActionResult> Edit(Edit.Query request)
         {
-            var command = await _mediator.Send(query);
+            var command = await _mediator.Send(request);
 
-            if (!command.ProductCategories.Any(productCategory => productCategory.Id == query.Id))
+            if (!command.ProductCategories.Any(productCategory => productCategory.Id == request.Id))
             {
                 Response.StatusCode = 404;
                 return View("AdminLTE/_PageNotFound");
@@ -50,17 +51,19 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
         }
 
         [HttpPost]
-        public async Task<ActionResult> Edit(Edit.Command command)
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Edit(Edit.Command request)
         {
             if (!ModelState.IsValid)
             {
-                return View(command);
+                return View(request);
             }
 
-            await _mediator.Send(command);
+            await _mediator.Send(request);
 
             TempData["ToastrSuccess"] = "Successfully updated product category.";
-            return View(command);
+
+            return RedirectToAction(nameof(Edit), new { id = request.Id });
         }
 
         [HttpPost]

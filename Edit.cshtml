@@ -35,7 +35,6 @@
                                             <div class="tab-pane @(Model.Languages[i].IsDefault ? "active" : "")" id="@Model.Languages[i].Name.ToLower()-language">
                                                 <div class="form-group">
                                                     <input asp-for="Id" type="hidden" />
-
                                                     <input asp-for="Languages[i].Id" type="hidden" />
                                                     <input asp-for="Languages[i].Name" type="hidden" />
                                                     <input asp-for="Languages[i].IsActive" type="hidden" />

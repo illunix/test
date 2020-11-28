@@ -66,7 +66,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
                     if (language.IsDefault)
                     {
-                        _mapper.Map(language, category);
+                        _mapper.Map(category, language);
                     }
                     else
                     {
