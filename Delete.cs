@@ -1,13 +1,13 @@
 ﻿using FluentValidation;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using Ravency.Infrastructure.Data;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Ravency.Web.Areas.Catalog.ProductCategories
+namespace Ravency.Web.Areas.Configuration.Languages
 {
     public class Delete
     {
@@ -34,26 +34,13 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                 _context = context;
             }
 
-            protected override async Task Handle(Command command, CancellationToken cancellationToken)
+            protected override async Task Handle(Command request, CancellationToken cancellationToken)
             {
-                var category = await _context.ProductCategories
-                    .FindAsync(command.Id);
+                var language = await _context.Languages
+                    .FindAsync(request.Id);
 
-                _context.ProductCategories
-                    .Remove(category);
-
-                var categoryLocales = await _context.ProductCategoryLocales
-                    .Where(x => x.CategoryId == command.Id)
-                    .ToListAsync();
-
-                if (categoryLocales.Any())
-                {
-                    foreach (var categoryLocale in categoryLocales)
-                    {
-                        _context.ProductCategoryLocales
-                            .Remove(categoryLocale);
-                    }
-                }
+                _context.Languages
+                    .Remove(language);
 
                 await _context.SaveChangesAsync();
             }

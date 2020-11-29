@@ -1,17 +1,25 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using System.Globalization;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Ravency.Web.Areas.Configuration.Languages;
 
-namespace Ravency.Web.Areas.Catalog.ProductCategories
+namespace Ravency.Web.Areas.Configuration.Languages
 {
-    [Area("Catalog")]
-    [Route("[area]/product-categories/[action]")]
-    public class ProductCategoriesController : Controller
+    [Area("Configuration")]
+    [Route("[area]/[controller]/[action]")]
+#if RELEASE
+    [Authorize(AuthenticationSchemes = "Bearer", Policy = "admin")]
+#endif
+    public class LanguagesController : Controller
     {
         private readonly IMediator _mediator;
 
-        public ProductCategoriesController(IMediator mediator)
+        public LanguagesController(IMediator mediator)
         {
             _mediator = mediator;
         }
@@ -23,25 +31,25 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
             => View(await _mediator.Send(new Add.Query()));
 
         [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Add(Add.Command command)
+        public async Task<ActionResult> Add(Add.Command request)
         {
             if (!ModelState.IsValid)
             {
-                return View(command);
+                return View(request);
             }
 
-            await _mediator.Send(command);
+            await _mediator.Send(request);
 
-            TempData["ToastrSuccess"] = "Successfully added new product category.";
-            return View(command);
+            TempData["ToastrSuccess"] = "Successfully added new language.";
+
+            return View(request);
         }
 
         public async Task<IActionResult> Edit(Edit.Query request)
         {
             var command = await _mediator.Send(request);
 
-            if (!command.ProductCategories.Any(productCategory => productCategory.Id == request.Id))
+            if (!command.Languages.Any(language => language.Id == request.Id))
             {
                 Response.StatusCode = 404;
                 return View("AdminLTE/_PageNotFound");
@@ -72,18 +80,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
         {
             await _mediator.Send(request);
 
-            TempData["ToastrSuccess"] = "Successfully deleted product category.";
-
-            return RedirectToAction(nameof(Index));
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<ActionResult> DeleteWithProducts(DeleteWithProducts.Command request)
-        {
-            await _mediator.Send(request);
-
-            TempData["ToastrSuccess"] = "Successfully deleted product category with products.";
+            TempData["ToastrSuccess"] = "Successfully deleted language.";
 
             return RedirectToAction(nameof(Index));
         }

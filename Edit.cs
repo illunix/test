@@ -12,7 +12,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Ravency.Web.Areas.Catalog.ProductCategories
+namespace Ravency.Web.Areas.Configuration.Languages
 {
     public class Edit
     {
@@ -32,67 +32,42 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
         public class QueryHandler : IRequestHandler<Query, Command>
         {
             private readonly ApplicationDbContext _context;
-            private readonly IMapper _mapper;
+            private readonly IConfigurationProvider _configuration;
 
-            public QueryHandler(ApplicationDbContext context, IMapper mapper)
+            public QueryHandler(ApplicationDbContext context, IConfigurationProvider configuration)
             {
                 _context = context;
-                _mapper = mapper;
+                _configuration = configuration;
             }
 
-            public async Task<Command> Handle(Query query, CancellationToken cancellationToken)
+            public async Task<Command> Handle(Query request, CancellationToken cancellationToken)
             {
-                var categories = await _context.ProductCategories
+                var languages = await _context.Languages
+                    .ProjectTo<Command.Language>(_configuration)
                     .ToListAsync();
 
-                var category = await _context.ProductCategories
-                    .Where(category => category.Id == query.Id)
+                var command = await _context.Languages
+                    .Where(language => language.Id == request.Id)
+                    .ProjectTo<Command>(_configuration)
                     .SingleOrDefaultAsync();
 
-                var categoryLocales = await _context.ProductCategoryLocales
-                    .Where(categoryLocale => categoryLocale.CategoryId == query.Id)
-                    .ToListAsync();
+                command.Languages = languages;
 
-                var languages = await _context.Languages
-                    .Where(language => language.IsActive)
-                    .ProjectTo<Language<ProductCategory>>(_mapper.ConfigurationProvider)
-                    .OrderByDescending(x => x.IsDefault)
-                    .ThenBy(language => language.Name)
-                    .ToListAsync();
-
-                foreach (var language in languages)
-                {
-                    language.Data = new ProductCategory();
-
-                    if (language.IsDefault)
-                    {
-                        _mapper.Map(category, language);
-                    }
-                    else
-                    {
-                        foreach (var categoryLocale in categoryLocales)
-                        {
-                            if (language.Id == categoryLocale.LanguageId)
-                            {
-                                _mapper.Map(language, categoryLocale);
-                            }
-                        }
-                    }
-                }
-
-                return new Command
-                {
-                    Languages = languages,
-                    ProductCategories = categories
-                };
+                return command;
             }
         }
 
         public class Command : IRequest
         {
             public Guid Id { get; set; }
-            public List<Language<ProductCategory>> Languages { get; set; }
-            public List<ProductCategory> ProductCategories { get; set; }
+            public bool IsActive { get; set; }
+            public bool IsDefault { get; set; }
+            public List<Language> Languages { get; set; }
+
+            public class Language
+            {
+                public Guid Id { get; set; }
+            }
         }
 
         public class CommandHandler : AsyncRequestHandler<Command>
@@ -106,41 +81,23 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                 _mapper = mapper;
             }
 
-            protected override async Task Handle(Command command, CancellationToken cancellationToken)
+            protected override async Task Handle(Command request, CancellationToken cancellationToken)
             {
-                var category = await _context.ProductCategories
-                    .FindAsync(command.Id);
+                var language = await _context.Languages
+                    .FindAsync(request.Id);
 
-                foreach (var language in command.Languages)
+                _mapper.Map(request, language);
+
+                if (request.IsDefault)
                 {
-                    if (language.IsDefault)
-                    {
-                        _mapper.Map(language, category);
+                    language = await _context.Languages
+                        .Where(language => language.IsDefault)
+                        .SingleOrDefaultAsync();
 
-                        _context.Update(category);
-                    }
-                    else
-                    {
-                        var categoryLocale = await _context.ProductCategoryLocales
-                            .Where(x => x.CategoryId == category.Id && x.LanguageId == language.Id)
-                            .SingleOrDefaultAsync();
-
-                        if (categoryLocale != null)
-                        {
-                            _mapper.Map(language, categoryLocale);
-
-                            _context.Update(categoryLocale);
-                        }
-                        else
-                        {
-                            categoryLocale = _mapper.Map<Language<ProductCategory>, ProductCategoryLocale>(language);
-
-                            _mapper.Map(category, categoryLocale);
-
-                            _context.Add(categoryLocale);
-                        }
-                    }
+                    language.IsDefault = false;
                 }
+
+                _context.Update(language);
 
                 await _context.SaveChangesAsync();
             }

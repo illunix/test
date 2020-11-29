@@ -1,40 +1,30 @@
 ﻿using AutoMapper;
 using Ravency.Core.Entities;
 using Ravency.Web.Models;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Text;
 
-namespace Ravency.Web.Areas.Catalog.ProductCategories
+namespace Ravency.Web.Areas.Configuration.Languages
 {
     public class MappingProfile : Profile
     {
         public MappingProfile()
         {
-            CreateMap<ProductCategory, Index.Result.ProductCategory>();
+            CreateMap<Add.Command, Language>();
 
-            CreateMap<Language<ProductCategory>, Language>();
-            CreateMap<Language, Language<ProductCategory>>();
+            CreateMap<Edit.Command, Language>();
 
-            CreateMap<Add.Command, ProductCategory>()
-                .ForMember(d => d.Id, opt => opt.Ignore());
+            CreateMap<Language, Edit.Command.Language>();
 
-            CreateMap<Language<ProductCategory>, ProductCategory>()
-                .ForMember(d => d.Id, opt => opt.Ignore())
-                .ForMember(d => d.Name, opt => opt.MapFrom(c => c.Data.Name))
-                .ForMember(d => d.Gender, opt => opt.MapFrom(c => c.Data.Gender));
+            CreateMap<Language, Edit.Command>();
 
-            CreateMap<ProductCategory, Language<ProductCategory>>()
-                .ForMember(d => d.Id, opt => opt.Ignore())
-                .ForPath(d => d.Name, opt => opt.Ignore())
-                .ForPath(d => d.Data.Name, opt => opt.MapFrom(c => c.Name))
-                .ForPath(d => d.Data.Gender, opt => opt.MapFrom(c => c.Gender));
+            CreateMap<Edit.Command.Language, Edit.Command>();
 
-            CreateMap<Language<ProductCategory>, ProductCategoryLocale>()
-                .ForMember(d => d.Id, opt => opt.Ignore())
-                .ForMember(d => d.CategoryId, opt => opt.MapFrom(c => c.Data.Id))
-                .ForMember(d => d.LanguageId, opt => opt.MapFrom(c => c.Id))
-                .ForMember(d => d.Name, opt => opt.MapFrom(c => c.Data.Name));
-
-            CreateMap<ProductCategory, ProductCategoryLocale>()
-                .ForMember(d => d.CategoryId, opt => opt.MapFrom(c => c.Id));
+            CreateMap<CultureInfo, Language>()
+                .ForMember(d => d.Name, opt => opt.MapFrom(c => c.EnglishName))
+                .ForMember(d => d.Code, opt => opt.MapFrom(c => c.Name));
         }
     }
 }
