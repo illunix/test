@@ -19,12 +19,12 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
         public async Task<IActionResult> Index()
             => View(await _mediator.Send(new Index.Query()));
 
-        public async Task<IActionResult> Add()
-            => View(await _mediator.Send(new Add.Query()));
+        public async Task<IActionResult> Add(Add.Query request)
+            => View(await _mediator.Send(request));
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Add(Add.Model request)
+        public async Task<IActionResult> Add(Add.Command request)
         {
             if (!ModelState.IsValid)
             {

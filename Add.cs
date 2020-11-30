@@ -33,7 +33,17 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
             public async Task<Model> Handle(Query query, CancellationToken cancellationToken)
             {
-                return new Model(_context, _configuration);
+                var languages = await _context.Languages
+                    .Where(language => language.IsActive)
+                    .ProjectTo<Language<ProductCategory>>(_configuration)
+                    .OrderByDescending(x => x.IsDefault)
+                    .ThenBy(language => language.Name)
+                    .ToListAsync();
+
+                return new Model
+                {
+                    Languages = languages
+                };
             }
         }
 
@@ -44,16 +54,6 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
         public record Model : Command
         {
             public List<Language<ProductCategory>> Languages;
-
-            public Model(ApplicationDbContext context, IConfigurationProvider configuration)
-            {
-                var languages = context.Languages
-                    .Where(language => language.IsActive)
-                    .ProjectTo<Language<ProductCategory>>(configuration)
-                    .OrderByDescending(x => x.IsDefault)
-                    .ThenBy(language => language.Name)
-                    .ToList();
-            }
         }
 
         public class CommandValidator : AbstractValidator<Model>
@@ -89,7 +89,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
             }
         }
 
-        public class CommandHandler : AsyncRequestHandler<Model>
+        public class CommandHandler : AsyncRequestHandler<Command>
         {
             private readonly ApplicationDbContext _context;
             private readonly IMapper _mapper;
@@ -100,11 +100,15 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                 _mapper = mapper;
             }
 
-            protected override async Task Handle(Model request, CancellationToken cancellationToken)
+            protected override async Task Handle(Command request, CancellationToken cancellationToken)
             {
                 var categoryId = new Guid();
 
-                foreach (var language in request.Languages)
+                var languages = await _context.Languages
+                    .ProjectTo<Language<ProductCategory>>(_mapper.ConfigurationProvider)
+                    .ToListAsync();
+
+                foreach (var language in languages)
                 {
                     if (language.IsDefault)
                     {
