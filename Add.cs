@@ -16,11 +16,11 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 {
     public class Add
     {
-        public record Query : IRequest<Model>
+        public record Query : IRequest<Command>
         {
         }
 
-        public class QueryHandler : IRequestHandler<Query, Model>
+        public class QueryHandler : IRequestHandler<Query, Command>
         {
             private readonly ApplicationDbContext _context;
             private readonly IConfigurationProvider _configuration;
@@ -31,7 +31,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                 _configuration = configuration;
             }
 
-            public async Task<Model> Handle(Query query, CancellationToken cancellationToken)
+            public async Task<Command> Handle(Query query, CancellationToken cancellationToken)
             {
                 var languages = await _context.Languages
                     .Where(language => language.IsActive)
@@ -40,7 +40,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                     .ThenBy(language => language.Name)
                     .ToListAsync();
 
-                return new Model
+                return new Command
                 {
                     Languages = languages
                 };
@@ -49,44 +49,8 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
         public record Command : IRequest
         {
-        }
-
-        public record Model : Command
-        {
             public List<Language<ProductCategory>> Languages;
-        }
-
-        public class CommandValidator : AbstractValidator<Model>
-        {
-            public CommandValidator(ApplicationDbContext context)
-            {
-                RuleFor(command => command.Languages)
-                    .NotNull();
-
-                RuleForEach(command => command.Languages)
-                    .ChildRules(languages =>
-                    {
-                        languages.RuleFor(language => language.Data.Name)
-                            .NotEmpty().WithMessage("Please enter category name.")
-                            .MustAsync(async (language, name, cancellationToken) =>
-                            {
-                                var exist = false;
-
-                                if (language.IsDefault)
-                                {
-                                    exist = await context.ProductCategories
-                                        .AnyAsync(x => x.Name == name);
-                                }
-                                else
-                                {
-                                    exist = await context.ProductCategoryLocales
-                                        .AnyAsync(x => x.Name == name);
-                                }
-
-                                return !exist;
-                            }).WithMessage("Category with this name already exist");
-                    });
-            }
+            public string test;
         }
 
         public class CommandHandler : AsyncRequestHandler<Command>
@@ -104,11 +68,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
             {
                 var categoryId = new Guid();
 
-                var languages = await _context.Languages
-                    .ProjectTo<Language<ProductCategory>>(_mapper.ConfigurationProvider)
-                    .ToListAsync();
-
-                foreach (var language in languages)
+                foreach (var language in request.Languages)
                 {
                     if (language.IsDefault)
                     {

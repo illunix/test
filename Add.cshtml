@@ -1,4 +1,4 @@
-﻿@model Ravency.Web.Areas.Catalog.ProductCategories.Add.Model
+﻿@model Ravency.Web.Areas.Catalog.ProductCategories.Add.Command
 @using Ravency.Web.Enums
 
 <section class="content">
@@ -38,6 +38,8 @@
                                                     <input asp-for="Languages[i].Name" type="hidden" />
                                                     <input asp-for="Languages[i].IsActive" type="hidden" />
                                                     <input asp-for="Languages[i].IsDefault" type="hidden" />
+
+                                                    <input asp-for="test" value="essa" type="hidden" />
 
                                                     <label>Category name</label>
                                                     <input asp-for="Languages[i].Data.Name" type="text" class="form-control" />
