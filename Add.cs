@@ -16,11 +16,11 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 {
     public class Add
     {
-        public record Query : IRequest<Command>
+        public record Query : IRequest<Model>
         {
         }
 
-        public class QueryHandler : IRequestHandler<Query, Command>
+        public class QueryHandler : IRequestHandler<Query, Model>
         {
             private readonly ApplicationDbContext _context;
             private readonly IConfigurationProvider _configuration;
@@ -31,28 +31,32 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                 _configuration = configuration;
             }
 
-            public async Task<Command> Handle(Query query, CancellationToken cancellationToken)
+            public async Task<Model> Handle(Query query, CancellationToken cancellationToken)
             {
-                var languages = await _context.Languages
-                    .Where(language => language.IsActive)
-                    .ProjectTo<Language<ProductCategory>>(_configuration)
-                    .OrderByDescending(x => x.IsDefault)
-                    .ThenBy(language => language.Name)
-                    .ToListAsync();
-
-                return new Command
-                {
-                    Languages = languages
-                };
+                return new Model(_context, _configuration);
             }
         }
 
         public record Command : IRequest
         {
-            public List<Language<ProductCategory>> Languages;
         }
 
-        public class CommandValidator : AbstractValidator<Command>
+        public record Model : Command
+        {
+            public List<Language<ProductCategory>> Languages;
+
+            public Model(ApplicationDbContext context, IConfigurationProvider configuration)
+            {
+                var languages = context.Languages
+                    .Where(language => language.IsActive)
+                    .ProjectTo<Language<ProductCategory>>(configuration)
+                    .OrderByDescending(x => x.IsDefault)
+                    .ThenBy(language => language.Name)
+                    .ToList();
+            }
+        }
+
+        public class CommandValidator : AbstractValidator<Model>
         {
             public CommandValidator(ApplicationDbContext context)
             {
@@ -85,7 +89,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
             }
         }
 
-        public class CommandHandler : AsyncRequestHandler<Command>
+        public class CommandHandler : AsyncRequestHandler<Model>
         {
             private readonly ApplicationDbContext _context;
             private readonly IMapper _mapper;
@@ -96,7 +100,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
                 _mapper = mapper;
             }
 
-            protected override async Task Handle(Command request, CancellationToken cancellationToken)
+            protected override async Task Handle(Model request, CancellationToken cancellationToken)
             {
                 var categoryId = new Guid();
 

@@ -24,7 +24,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Add(Add.Command request)
+        public async Task<ActionResult> Add(Add.Model request)
         {
             if (!ModelState.IsValid)
             {
