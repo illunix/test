@@ -28,13 +28,14 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
         {
             if (!ModelState.IsValid)
             {
-                return View(request);
+                return View(await _mediator.Send(new Add.Query()));
             }
 
             await _mediator.Send(request);
 
             TempData["ToastrSuccess"] = "Successfully added new product category.";
-            return View(request);
+
+            return View(await _mediator.Send(new Add.Query()));
         }
 
         public async Task<IActionResult> Edit(Edit.Query request)
