@@ -35,7 +35,7 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
 
             TempData["ToastrSuccess"] = "Successfully added new product category.";
 
-            return RedirectToAction();
+            return View();
         }
 
         public async Task<IActionResult> Edit(Edit.Query request)

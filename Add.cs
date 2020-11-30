@@ -50,7 +50,6 @@ namespace Ravency.Web.Areas.Catalog.ProductCategories
         public record Command : IRequest
         {
             public List<Language<ProductCategory>> Languages;
-            public string test;
         }
 
         public class CommandHandler : AsyncRequestHandler<Command>
